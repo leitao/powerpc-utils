@@ -73,6 +73,12 @@ struct cpu_freq {
 
 #endif
 
+#if defined(__FreeBSD__)
+#define PTRACE_ATTACH PT_ATTACH
+#define PTRACE_DETTACH PT_DETACH
+#define PTRACE_DETTACH PT_DETACH
+#endif
+
 static int threads_per_cpu = 0;
 static int cpus_in_system = 0;
 static int threads_in_system = 0;
@@ -597,6 +603,16 @@ static int do_subcores_per_core(char *state)
 
 #define PTRACE_DSCR 44
 
+#if defined(__FreeBSD__)
+
+static int do_dscr_pid(int dscr_state, pid_t pid)
+{
+
+	return -1;
+}
+
+#else
+
 static int do_dscr_pid(int dscr_state, pid_t pid)
 {
 	int rc;
@@ -633,6 +649,7 @@ static int do_dscr_pid(int dscr_state, pid_t pid)
 	ptrace(PTRACE_DETACH, pid, NULL, NULL);
 	return rc;
 }
+#endif
 
 static int do_dscr(char *state, pid_t pid)
 {
